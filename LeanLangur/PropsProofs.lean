@@ -37,7 +37,7 @@ The notation `· ≤ ·` is for the `Nat.le` relation, which is defined inductiv
 #check Nat.le -- Nat → Nat → Prop
 
 /-!
-Two basic propotions are `False` and `True`. `False` is the proposition that is never true, and `True` is the proposition that is always true.
+Two basic propositions are `False` and `True`. `False` is the proposition that is never true, and `True` is the proposition that is always true.
 -/
 #check False -- Prop
 #check True -- Prop
