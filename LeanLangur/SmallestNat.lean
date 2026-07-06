@@ -61,7 +61,7 @@ theorem smallest_mem' (l: List Nat) (h: l ≠ []) : -- states and proves theorem
     unfold smallest
     simp only [List.mem_cons, List.not_mem_nil, or_false]  -- base case: if the list is a singleton, the smallest is that element, which is trivially in the list
   | x :: y :: zs => -- inductive case: if the list has at least
-    simp [smallest]
+    simp only [smallest, List.mem_cons, inf_eq_left]
     have ih := smallest_mem' (y :: zs) (by simp) -- induction hypothesis: the smallest of the tail is in the tail
     grind
 
@@ -103,9 +103,28 @@ Prove that if `p` is a predicate on natural numbers and `l` is a list of natural
 
 It will be useful to use the above results. Think about the mathematical argument for this fact, and then try to translate it into Lean. You may find it helpful to introduce some intermediate variables and hypotheses to structure the proof.
 -/
+
+#check List.mem_of_mem_filter
+
 theorem smallest_le_smallest_of_filter (l: List Nat) (p: Nat → Bool) (h: l.filter p ≠ []) : -- states and proves theorem `smallest_le_smallest_of_filter`
   smallest l (by grind) ≤ smallest (l.filter p) h := by -- starts tactic mode; the goal compares the smallest element of `l` with that of its nonempty filtered sublist
-  sorry
+  have hmemFilter :
+      smallest (l.filter p) h ∈ l.filter p :=
+    smallest_mem (l.filter p) h
+
+  have hmem :
+      smallest (l.filter p) h ∈ l :=
+    List.mem_of_mem_filter hmemFilter
+
+  exact smallest_le_all l (by grind) (smallest (l.filter p) h) hmem
+
+theorem smallest_le_smallest_of_filter'
+    (l : List Nat)
+    (p : Nat → Bool)
+    (h : l.filter p ≠ []) :
+    smallest l (by grind) ≤ smallest (l.filter p) h := by
+  apply smallest_le_all
+  exact List.mem_of_mem_filter (smallest_mem (l.filter p) h)
 
 end nat -- closes the current namespace or section
 
