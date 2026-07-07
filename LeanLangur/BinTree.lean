@@ -100,6 +100,16 @@ theorem mem_iff_mem_toList {α : Type} (t : BinTree α) (x : α) : -- states and
 
 Define a function `listToBinTree : List α → BinTree α` that converts a list to a binary tree (this is not unique). Then, prove that for any list `l` and element `x`, `x ∈ listToBinTree l` if and only if `x ∈ l`.
 -/
+
+@[grind .] -- annotation controlling elaboration, simplification, or automation
+def listToBinTree {α : Type} : List α → Option (BinTree α) -- defines `BinTree.toList`
+  | [] => none
+  | [x] => some (leaf x)
+  | x :: xs =>
+    match listToBinTree xs with
+      | none => none
+      | some t => some (node (leaf x) t)
+
 end langur -- closes the current namespace or section
 /-!
 ## Next files
