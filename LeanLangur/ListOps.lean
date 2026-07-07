@@ -82,6 +82,15 @@ Using the `do` notation, implement a function `innerPairs` that in a special cas
 More generally, we are given `ll: List (List α)` and we want `innerPairs` to return a list of all pairs `(x, y)` such that `x` and `y` are both elements of the same inner list in `ll`. In the above example, the answer would be `[(1, 1), (1, 2), (2, 1), (2, 2), (3, 3), (3, 4), (4, 3), (4, 4)]`.
 -/
 
+def innerPairs {α : Type} (l: List (List α)) := do
+  let inner_l ← l
+  let x ← inner_l
+  let y ← inner_l
+  return (x, y)
+
+
+#eval innerPairs [[1, 2], [3, 4]]
+
 /-!
 List of sums using `do` notation. Requires the type `α` to have an instance of the `Add` typeclass to tell Lean how to add elements of type `α`. This example is just a preview of using typeclasses.
 -/
