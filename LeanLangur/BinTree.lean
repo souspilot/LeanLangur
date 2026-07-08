@@ -100,15 +100,30 @@ theorem mem_iff_mem_toList {α : Type} (t : BinTree α) (x : α) : -- states and
 
 Define a function `listToBinTree : List α → BinTree α` that converts a list to a binary tree (this is not unique). Then, prove that for any list `l` and element `x`, `x ∈ listToBinTree l` if and only if `x ∈ l`.
 -/
-
 @[grind .] -- annotation controlling elaboration, simplification, or automation
-def listToBinTree {α : Type} : List α → Option (BinTree α) -- defines `BinTree.toList`
-  | [] => none
-  | [x] => some (leaf x)
-  | x :: xs =>
-    match listToBinTree xs with
-      | none => none
-      | some t => some (node (leaf x) t)
+def listToBinTreeAux {α : Type} (head : α) : List α → BinTree α
+  | [] => leaf head
+  | x :: xs => node (leaf head) (listToBinTreeAux x xs)
+
+
+@[grind .]
+def listToBinTree {α : Type} (l : List α) (h : l ≠ []) : BinTree α :=
+  match l with
+  | [] => by contradiction
+  | x :: xs => listToBinTreeAux x xs
+
+theorem mem_iff_mem_toTreeAux {α : Type} (x y : α) (xs : List α) :
+    y ∈ listToBinTreeAux x xs ↔ y = x ∨ y ∈ xs := by
+  induction xs generalizing x with
+  | nil => grind [listToBinTreeAux]
+  | cons z zs ih => grind [listToBinTreeAux]
+
+theorem mem_iff_mem_toTree {α : Type} (l : List α) (x : α) (h : l ≠ []) :
+    x ∈ l ↔ x ∈ listToBinTree l h := by
+  cases l with
+  | nil => contradiction
+  | cons head tail =>
+    simp [listToBinTree, mem_iff_mem_toTreeAux]
 
 end langur -- closes the current namespace or section
 /-!
