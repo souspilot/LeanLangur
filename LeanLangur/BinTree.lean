@@ -35,6 +35,8 @@ deriving Repr, Inhabited -- asks Lean to generate standard instances automatical
 
 open BinTree -- opens names so constructors or helpers can be written unqualified
 
+#check BinTree.rec
+
 /--
 Converts a binary tree to a list by performing an in-order traversal.
 -/

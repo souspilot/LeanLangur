@@ -74,6 +74,47 @@ theorem nOrSuccNeven (n : Nat) : IsEven n ∨ IsEven (n + 1) -- states and prove
 
 Define an inductive predicate `IsOdd : Nat → Prop` for odd natural numbers, and prove that any natural number is either even or odd, but not both (As two separate propositions).
 -/
+
+@[grind cases]
+inductive IsOdd : Nat → Prop
+  | oneOdd : IsOdd 1
+  | addTwoOdd (h : IsOdd n) : IsOdd (n + 2)
+
+open IsOdd
+
+@[grind .]
+theorem one_odd : IsOdd 1 := by
+  apply oneOdd
+
+@[grind .]
+theorem addTwo_odd (n : Nat) (h : IsOdd n) : IsOdd (n + 2) := by
+  apply addTwoOdd
+  assumption
+
+theorem even_succ_odd {n : Nat} (h : IsEven n) : IsOdd (n + 1) := by
+  induction h <;> grind
+
+theorem odd_succ_even {n : Nat} (h : IsOdd n) : IsEven (n + 1) := by
+  induction h <;> grind
+
+theorem even_or_odd (n : Nat) : IsEven n ∨ IsOdd n := by
+  induction n with
+  | zero => left; exact zeroEven
+  | succ n ih =>
+    cases ih with
+    | inl he => right; exact even_succ_odd he
+    | inr ho => left; exact odd_succ_even ho
+
+theorem not_both {n : Nat} (he : IsEven n) (ho : IsOdd n) : False := by
+  induction he <;> grind
+
+theorem not_both' {n : Nat} (he : IsEven n) (ho : IsOdd n) : False := by
+  induction he with
+  | zeroEven => cases ho
+  | addTwoEven _ ih =>
+    cases ho with
+    | addTwoOdd h' => exact ih h'
+
 end langur -- closes the current namespace or section
 /-!
 ## Next files
